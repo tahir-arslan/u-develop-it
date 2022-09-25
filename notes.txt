@@ -1,0 +1,117 @@
+Lesson 12
+create voting API via Express.js routes, using MySQL shell to connect to MySQL 
+server to create database and table, then use MySQL shell to perform CRUD operations
+
+check mysql with `mysql --version`
+
+Database: collection of interrelated data, stored in one+ tables related to each other
+Table: compsed of rows and columns. column = field, row = record
+Query: request for data from database table(s)
+
+check to make sure database doesn't exist with `show databases;`
+
+Start by creating the database with opening MySQL shell with `mysql -u root -p`
+after logging in, `mysql>` will show up confirming we are in the shell
+    here we can CRUD
+
+create database with the following: `CREATE DATABASE <database name>;`
+    SQL convention with all caps helps to differentiate from identifiers like names of
+    databases, tables, columns. note: identifiers are case sensitive so a database named
+    `elections` will be different from `Elections`
+    semicolon must be used to end command or else new command will continue from 
+    previous command
+
+select database with: `USE <database name>`
+
+after creating and selecting database, then create table inside that database
+`CREATE TABLE <table name>`
+
+{
+review the following: 
+`CREATE TABLE candidates (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(30) NOT NULL,
+  last_name VARCHAR(30) NOT NULL,
+  industry_connected BOOLEAN NOT NULL
+);`
+
+everything inside `( )` lists details of each column. column names cannot contain spaces,
+    and are normally lowercase. each column is seperated by a comma.
+datatypes follow column names. 
+theoretically since each record could be as long as a book, should limit the number of chars
+    being inputted. therefore `30` inside `VARCHAR(30)` to limit input to 30 characters
+each table should have an id, especially if it contains unique records. id is designated using 
+    the `PRIMARY KEY` and `AUTO_INCREMENT` attributes. `PRIMARY KEY` states each value 
+    in column must be unique for each record in the table. Can also be used to link tables 
+    together. `AUTO_INCREMENT`` increments each successive row and assigns a new value 
+    to `id`. 
+        each table can only have one `PRIMARY KEY`
+    `NOT NULL` means column must contain a value. so if trying to insert a record into
+        `candidates` column with missing values, database will not allow the addition
+        note: since `PRIMARY KEY` column must contain a value by definition, does not
+            require `NOT NULL` explicitly
+}
+
+after creating table, can verify with `DESCRIBE candidates;`
+    this describes tables fields and field attributes without table's data/records
+
+{
+SQL statements that will input/load data to table: 
+    `INSERT INTO candidates (first_name, last_name, industry_connected)
+    VALUES ('Ronald', 'Firbank', 1);`
+
+NOTE: the varchar characters must be surrounded by ' ' since they are strings
+}
+
+to verify the data added, `SELECT * FROM <table name>;`
+
+adding multiple inserts:
+    `INSERT INTO candidates (first_name, last_name, industry_connected)
+    VALUES
+        ('Virginia', 'Woolf', 1),
+        ('Piers', 'Gaveston', 0),
+        ('Charles', 'LeRoi', 1),
+        ('Katherine', 'Mansfield', 1),
+        ('Dora', 'Carrington', 0),
+        ('Edward', 'Bellamy', 0),
+        ('Montague', 'Summers', 1),
+        ('Octavia', 'Butler', 1),
+        ('Unica', 'Zurn', 1);`
+
+select specific columns: `SELECT first_name, last_name FROM candidates;`
+selectively filtering data can be done with `WHEN` clause:
+    `SELECT first_name, industry_connected
+    FROM candidates
+    WHERE industry_connected = 1;`
+filter data to only show `industry_connected` with a value of 1
+another example, but to select a specific row:
+    `SELECT first_name, last_name, industry_connected
+    FROM candidates
+    WHERE id = 5;`
+
+to save and share these databases, create `./db/db.sql` and `./db/schema.sql`
+    create `seeds.sql` for data insertion
+    in `db.sql`, create database and use it the same as above
+    in `schema.sql` create table with columns the same as above
+        since we already have this table created in the shell, need to delete (DROP) the 
+        database via shell command: `DROP DATABASE election;`
+
+now to recreate `election` database or to execute script files:    `source db/db.sql`
+next, create table and columns from `schema.sql` with:      `source db/schema.sql`
+check with: `DESCRIBE candidates;`
+
+now create `./db/seeds.sql` and populate candidates table with data
+execute file with: `source db/seeds.sql`
+    check with: `SELECT * FROM candidates;`
+
+can change table with the `UPDATE` keyword, ex:
+    `UPDATE candidates
+    SET industry_connected = 1
+    WHERE id = 3;`
+
+to delete data, use `DELETE FROM` keywords, ex:
+    `DELETE FROM candidates
+    WHERE first_name = "Montague";`
+
+        side note: enter `quit` in MySQL shell to exit. type `help` in MySQL for more commands
+
