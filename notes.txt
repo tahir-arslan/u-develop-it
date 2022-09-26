@@ -184,6 +184,13 @@ different types of relationships: one-to-one or one-to-many. in this lesson, one
         `SELECT * FROM candidates
         LEFT JOIN parties ON candidates.party_id = parties.id;`
 
+12.4
+Normalization: process of organizing relational data to provide the following benefits:
+    - each table reps a spec topic (approach adheres to best practice of Separation of Concerns)
+    - limits data redundancy
+    - allows writing simpler SQL queries
+    - less risk for data modification errors since you can refer to an entire record in another
+        table by using its primary key. Any changes to that record will happen all in one place.
 
 12.2.8
 question not connecting (cannot complete)
