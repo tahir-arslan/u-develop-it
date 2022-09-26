@@ -1,4 +1,6 @@
 -- drop tables if exist to ensure working with the most to date tables
+-- the order of which tables are dropped matter! 
+DROP TABLE IF EXISTS votes;
 DROP TABLE IF EXISTS candidates;
 DROP TABLE IF EXISTS parties;
 DROP TABLE IF EXISTS voters;
@@ -37,4 +39,20 @@ CREATE TABLE voters (
     -- capture date and time of when voter registers (based on time of server location, not
     -- location of client's machine)
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- vote tracking table
+CREATE TABLE votes (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    voter_id INTEGER NOT NULL,
+    candidate_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -- constraints will ensure that there are no duplicate records since voters are not allowed to vote twice
+    -- if relevant candidate/voter is removed, vote is also removed
+    -- uc_voter is unique count, so whoever has a voter_id of 1 can only appear once
+    CONSTRAINT uc_voter UNIQUE (voter_id),
+    -- before, ON DELETE SET NULL means if record is deleted, set to NULL. now, 
+    -- ON DELETE CASCADE will delete entire row from table
+    CONSTRAINT fk_voter FOREIGN KEY (voter_id) REFERENCES voters(id) ON DELETE CASCADE,
+    CONSTRAINT fk_candidate FOREIGN KEY (candidate_id) REFERENCES candidates(id) ON DELETE CASCADE
 );

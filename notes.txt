@@ -192,5 +192,51 @@ Normalization: process of organizing relational data to provide the following be
     - less risk for data modification errors since you can refer to an entire record in another
         table by using its primary key. Any changes to that record will happen all in one place.
 
+12.5
+create votes table to track votes, by merging multiple tables together
+    this allows for specific data being analyzed to be concise and not cluttered
+    also can simply reset `votes` table and use for future elections
+
+after creating `votes` table, and resetting tables/seeds with `source` command in MySQL, execute:
+    `INSERT INTO votes (voter_id, candidate_id) VALUES(1, 1);
+    INSERT INTO votes (voter_id, candidate_id) VALUES(2, 1);
+    INSERT INTO votes (voter_id, candidate_id) VALUES(2, 2);`
+error on third line, indicating duplicate entry and does not allow it to be added to table.
+this is intentional and shows that our code works since we do not want a voter to vote twice.
+multiple votes were prevented by setting `vote_id` in `votes` table to `unique_id`
+
+to test the `ON DELETE CASCADE`, execute in MySQL:
+    `DELETE FROM voters WHERE id = 2;
+    SELECT * FROM votes;`
+entire row is deleted from line one and confirmed with line 2.
+
+after creating votes table, execute: 
+    `INSERT INTO votes (voter_id, candidate_id) 
+    VALUES(3,1), (4,2), (5,2), (6,2), (7,2), (8,3), (9,3);`
+this will populate the table. next, can perform a math-related logic via MySQL. in this ex.:
+    `SELECT COUNT(candidate_id) FROM votes;`
+`COUNT( )` will count how many times a certain field value appears
+but in this case `SELECT COUNT( )` will show total votes cast. we want votes per candidate.
+so can use `GROUP BY` keyword, which can consolidate several rows of data, grouping by a
+shared value (ex. candidate_id). with this keyword, you can then run an aggregate function
+to retrieve an average/sum/min value from the group. ex.:
+    `SELECT COUNT(candidate_id) FROM votes GROUP BY candidate_id;`
+
+since `candidate_id` is a fk, can join this table with the `candidates` table, then join the
+`candidates` table with the `parties` table to pull their party affiliation. execute in MySQL:
+    `SELECT candidates.*, parties.name AS party_name, COUNT(candidate_id)
+    FROM votes
+    LEFT JOIN candidates ON votes.candidate_id = candidates.id
+    LEFT JOIN parties ON candidates.party_id = parties.id
+    GROUP BY candidate_id;`
+
+following that code, can refine it for easier use for front end and better organization. 
+in MySQL, execute:
+    `SELECT candidates.*, parties.name AS party_name, COUNT(candidate_id) AS count
+    FROM votes
+    LEFT JOIN candidates ON votes.candidate_id = candidates.id
+    LEFT JOIN parties ON candidates.party_id = parties.id
+    GROUP BY candidate_id ORDER BY count DESC;`
+
 12.2.8
 question not connecting (cannot complete)
