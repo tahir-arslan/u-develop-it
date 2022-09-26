@@ -165,3 +165,25 @@ const db = mysql.createConnection(
 
 create API endpoint to retrieve all candidates from `candidates` table
 front end can loop and parse object to display list of candidate names
+
+12.3
+Relational Data (tables with their own data can be linked to other tables via primary keys)
+
+foreign key: field in one table that references primary key of another table
+`ALTER TABLE` keyword allows us to add to a table that's already set up so that we don't loose
+any preexisting data (ex adding column for foreign key)
+
+can delete tables with `DROP TABLE` statement
+
+different types of relationships: one-to-one or one-to-many. in this lesson, one-to-many
+
+`JOIN` keyword merges 2+ tables together, filling fk with actual data
+    otherwise, would have to query database twice (one for each party, then merge with JS)
+    - inner join, left join, right join, full outer join
+    in this case: 
+        `SELECT * FROM candidates
+        LEFT JOIN parties ON candidates.party_id = parties.id;`
+
+
+12.2.8
+question not connecting (cannot complete)
